@@ -43,19 +43,28 @@ package MooseX::Role::BuildInstanceOf; {
         default => 'new',
     );
 
-    parameter 'args' => (
-        isa  => 'ArrayRef',
-        is => 'ro',
-        required => 1,
-        default => sub { [] },
-    );
+    {
+        use Moose::Util::TypeConstraints;
+        my $tc = subtype as 'CodeRef';
+        coerce $tc, from 'ArrayRef', via { my $args = $_; sub { $args } };
+        no Moose::Util::TypeConstraints;
 
-    parameter 'fixed_args' => (
-        isa  => 'ArrayRef',
-        is => 'ro',
-        required => 1,
-        default => sub { [] },
-    );
+        parameter 'args' => (
+            isa  => $tc,
+            is => 'ro',
+            coerce => 1,
+            required => 1,
+            default => sub { [] },
+        );
+
+        parameter 'fixed_args' => (
+            isa  => $tc,
+            is => 'ro',
+            coerce => 1,
+            required => 1,
+            default => sub { [] },
+        );
+    }
 
     parameter 'type' => (
         isa => 'Str',
@@ -111,7 +120,7 @@ package MooseX::Role::BuildInstanceOf; {
         );
 
         method "_build_". $prefix ."_args" => sub {
-            return $parameters->args;
+            return $parameters->args->();
         };
 
         has $prefix."_fixed_args" => (
@@ -122,7 +131,7 @@ package MooseX::Role::BuildInstanceOf; {
         );
 
         method "_build_". $prefix ."_fixed_args" => sub {
-            return $parameters->fixed_args;
+            return $parameters->fixed_args->();
         };
 
         ## This needs to be broken out into roles or something
