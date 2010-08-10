@@ -6,4 +6,6 @@ Makefile
 Makefile.old
 META.yml
 *.swp
-.DS_Store
+.*
+!.gitignore
+MooseX-Role-BuildInstanceOf-*
