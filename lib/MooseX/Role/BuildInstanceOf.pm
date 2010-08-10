@@ -9,7 +9,6 @@ package MooseX::Role::BuildInstanceOf;
         isa  => 'Str',
         is => 'ro',
         required => 1,
-        coerce => 1
     );
 
     my $decamelize = sub {
