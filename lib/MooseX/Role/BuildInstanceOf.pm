@@ -12,7 +12,7 @@ package MooseX::Role::BuildInstanceOf;
         coerce => 1
     );
 
-    sub decamelize {
+    my $decamelize = sub {
         my $s = shift;
         $s =~ s{([^a-zA-Z]?)([A-Z]*)([A-Z])([a-z]?)}{
             my $fc = pos($s)==0;
@@ -22,7 +22,7 @@ package MooseX::Role::BuildInstanceOf;
             $t;
         }ge;
         $s;
-    }
+    };
 
     parameter 'prefix' => (
         isa  => 'Str',
@@ -33,7 +33,7 @@ package MooseX::Role::BuildInstanceOf;
             my $self = shift @_;
             my $target = $self->target;
             $target = ($target =~m/(::|~)(.+)$/)[1];
-            return decamelize($target);
+            return $decamelize->($target);
         },
     );
 
